@@ -19,6 +19,7 @@ class ResultActivity : AppCompatActivity() {
         val yaw = intent.getFloatExtra("yaw", 0f)
         val roll = intent.getFloatExtra("roll", 0f)
         val pitch = intent.getFloatExtra("pitch", 0f)
+        val attendance = intent.getIntExtra("attendance", 0)
 
         findViewById<ImageView>(R.id.imageEnrolled).setImageBitmap(enrolledFace)
         findViewById<ImageView>(R.id.imageIdentified).setImageBitmap(identifyedFace)
@@ -28,5 +29,6 @@ class ResultActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.textYaw).text = "Yaw: " + yaw
         findViewById<TextView>(R.id.textRoll).text = "Roll: " + roll
         findViewById<TextView>(R.id.textPitch).text = "Pitch: " + pitch
+        findViewById<TextView>(R.id.textAttendance).text = "Attendance: $attendance"
     }
 }

@@ -146,5 +146,7 @@ class AboutActivity : AppCompatActivity() {
                 startActivity(telegram)
             }
         }
+
+        findViewById<TextView>(R.id.textTotalStudents).setText("Total Students: 0")
     }
 }

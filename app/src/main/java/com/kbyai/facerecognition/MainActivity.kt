@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         textWarning = findViewById<TextView>(R.id.textWarning)
+        val textTotalStudents = findViewById<TextView>(R.id.textTotalStudents) // Add this line
 
         var ret = FaceSDK.setActivation(
             "S18+rOL1H3BXjAWGP7gEdgbJVotQ4g1o+YMcZruzEaKWFUQJHB2P1ylgw1FAfi+enDQA3nE4E9h6\n" +
@@ -71,6 +72,9 @@ class MainActivity : AppCompatActivity() {
         dbManager = DBManager(this)
         dbManager.loadPerson()
         allPersons = ArrayList(DBManager.personList)
+
+        // Update total students count
+        textTotalStudents.text = "Total Students: ${DBManager.personList.size}"
 
         personAdapter = PersonAdapter(this, DBManager.personList)
         val listView: ListView = findViewById<View>(R.id.listPerson) as ListView
@@ -156,8 +160,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         personAdapter.notifyDataSetChanged()
+        findViewById<TextView>(R.id.textTotalStudents).text = "Total Students: ${DBManager.personList.size}"
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -190,7 +194,7 @@ class MainActivity : AppCompatActivity() {
                 faceDetectionParam.check_liveness_level = SettingsActivity.getLivenessLevel(this)
                 val faceBoxes: List<FaceBox>? = FaceSDK.faceDetection(bitmap, faceDetectionParam)
 
-                if(faceBoxes.isNullOrEmpty()) {
+                if (faceBoxes.isNullOrEmpty()) {
                     Toast.makeText(this, getString(R.string.no_face_detected), Toast.LENGTH_SHORT).show()
                 } else if (faceBoxes.size > 1) {
                     Toast.makeText(this, getString(R.string.multiple_face_detected), Toast.LENGTH_SHORT).show()
@@ -207,6 +211,7 @@ class MainActivity : AppCompatActivity() {
                             val name = input.text.toString().ifEmpty { "Person" + Random.nextInt(10000, 20000) }
                             dbManager.insertPerson(name, faceImage, templates)
                             personAdapter.notifyDataSetChanged()
+                            findViewById<TextView>(R.id.textTotalStudents).text = "Total Students: ${DBManager.personList.size}"
                             Toast.makeText(this, getString(R.string.person_enrolled), Toast.LENGTH_SHORT).show()
                         }
                         .setNegativeButton("Cancel", null)

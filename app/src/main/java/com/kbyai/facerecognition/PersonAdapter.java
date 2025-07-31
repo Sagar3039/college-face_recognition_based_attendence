@@ -1,6 +1,8 @@
 package com.kbyai.facerecognition;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.app.AlertDialog;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class PersonAdapter extends ArrayAdapter<Person> {
@@ -31,18 +34,14 @@ public class PersonAdapter extends ArrayAdapter<Person> {
         }
 
         TextView textName = convertView.findViewById(R.id.textName);
-        ImageView faceView = (ImageView) convertView.findViewById(R.id.imageFace);
-        convertView.findViewById(R.id.buttonDelete).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dbManager.deletePerson(DBManager.personList.get(position).name);
-                notifyDataSetChanged();
-            }
-        });
+        ImageView faceView = convertView.findViewById(R.id.imageFace);
+        Button buttonDelete = convertView.findViewById(R.id.buttonDelete);
 
+        // Set name and face
         textName.setText(person.name + " (Attendance: " + person.attendance + ")");
         faceView.setImageBitmap(person.face);
 
+        // Rename only when clicking the name
         textName.setOnClickListener(v -> {
             EditText input = new EditText(getContext());
             input.setText(person.name);
@@ -52,14 +51,26 @@ public class PersonAdapter extends ArrayAdapter<Person> {
                 .setPositiveButton("Save", (dialog, which) -> {
                     String newName = input.getText().toString();
                     person.name = newName;
-                    // Update in DB if needed
                     dbManager.updatePersonName(person, newName);
                     notifyDataSetChanged();
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
         });
-        // Return the completed view to render on screen
+
+        // Delete only when clicking the delete button
+        buttonDelete.setOnClickListener(view -> {
+            dbManager.deletePerson(DBManager.personList.get(position).name);
+            notifyDataSetChanged();
+        });
+
+        // REMOVE these lines to disable opening detail page
+        // faceView.setOnClickListener(detailClickListener);
+        // convertView.setOnClickListener(detailClickListener);
+
+        textName.setClickable(true);
+        buttonDelete.setClickable(true);
+
         return convertView;
     }
 }

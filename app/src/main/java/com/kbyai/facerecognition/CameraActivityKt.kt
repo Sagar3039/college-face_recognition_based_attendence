@@ -158,6 +158,7 @@ class CameraActivityKt : AppCompatActivity() {
                             intent.putExtra("yaw", faceBox.yaw)
                             intent.putExtra("roll", faceBox.roll)
                             intent.putExtra("pitch", faceBox.pitch)
+                            intent.putExtra("attendance", identifiedPerson!!.attendance)
                             startActivity(intent)
                         }
                     }

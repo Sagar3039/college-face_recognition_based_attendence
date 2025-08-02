@@ -16,7 +16,7 @@ public class DBManager extends SQLiteOpenHelper {
     public static ArrayList<Person> personList = new ArrayList<>();
 
     private static final String DATABASE_NAME = "person.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2; // <-- Change from 1 to 2
 
     public DBManager(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,6 +27,7 @@ public class DBManager extends SQLiteOpenHelper {
         db.execSQL(
             "CREATE TABLE person (" +
             "name TEXT PRIMARY KEY, " +
+            "roll TEXT, " + // <-- Add this line
             "face BLOB, " +
             "templates BLOB, " +
             "attendance INTEGER DEFAULT 0)"
@@ -39,7 +40,7 @@ public class DBManager extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insertPerson(String name, Bitmap face, byte[] templates) {
+    public void insertPerson(String name, String roll, Bitmap face, byte[] templates) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         face.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         byte[] faceJpg = byteArrayOutputStream.toByteArray();
@@ -47,12 +48,13 @@ public class DBManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
+        contentValues.put("roll", roll); // <-- Add this line
         contentValues.put("face", faceJpg);
         contentValues.put("templates", templates);
         contentValues.put("attendance", 0);
         db.insert("person", null, contentValues);
 
-        personList.add(new Person(name, face, templates, 0));
+        personList.add(new Person(name, roll, face, templates, 0));
     }
 
     public void loadPerson() {
@@ -63,12 +65,13 @@ public class DBManager extends SQLiteOpenHelper {
         if (res.moveToFirst()) {
             do {
                 String name = res.getString(res.getColumnIndex("name"));
+                String roll = res.getString(res.getColumnIndex("roll")); // <-- Add this line
                 byte[] faceJpg = res.getBlob(res.getColumnIndex("face"));
                 byte[] templates = res.getBlob(res.getColumnIndex("templates"));
                 int attendance = res.getInt(res.getColumnIndex("attendance"));
                 Bitmap face = BitmapFactory.decodeByteArray(faceJpg, 0, faceJpg.length);
 
-                Person person = new Person(name, face, templates, attendance);
+                Person person = new Person(name, roll, face, templates, attendance); // <-- Add roll
                 personList.add(person);
             } while (res.moveToNext());
         }

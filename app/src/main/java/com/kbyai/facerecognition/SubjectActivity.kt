@@ -2,13 +2,17 @@ package com.kbyai.facerecognition
 
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
 class SubjectActivity : AppCompatActivity() {
-    private lateinit var subjectAdapter: ArrayAdapter<String>
     private val PREFS_NAME = "subjects_prefs"
     private val SUBJECTS_KEY = "subjects_list"
+
+    private lateinit var subjectAdapter: SubjectAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,20 +22,21 @@ class SubjectActivity : AppCompatActivity() {
         val buttonAddSubject = findViewById<Button>(R.id.buttonAddSubject)
         val listSubjects = findViewById<ListView>(R.id.listSubjects)
 
-        // Always use a new list instance for the adapter
-        subjectAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, ArrayList(getSubjects()))
+        val subjects = getSubjects().toMutableList()
+        subjectAdapter = SubjectAdapter(this, subjects) { subjectToDelete ->
+            subjects.remove(subjectToDelete)
+            saveSubjects(subjects)
+            subjectAdapter.notifyDataSetChanged()
+            Toast.makeText(this, "Deleted: $subjectToDelete", Toast.LENGTH_SHORT).show()
+        }
         listSubjects.adapter = subjectAdapter
 
         buttonAddSubject.setOnClickListener {
             val subject = editSubject.text.toString().trim()
             if (subject.isNotEmpty()) {
-                val subjects = getSubjects().toMutableList()
                 if (!subjects.contains(subject)) {
                     subjects.add(subject)
                     saveSubjects(subjects)
-                    // Reload the list from storage using a new list instance
-                    subjectAdapter.clear()
-                    subjectAdapter.addAll(ArrayList(getSubjects()))
                     subjectAdapter.notifyDataSetChanged()
                     Toast.makeText(this, "Subject added: $subject", Toast.LENGTH_SHORT).show()
                     editSubject.text.clear()
@@ -54,5 +59,23 @@ class SubjectActivity : AppCompatActivity() {
     private fun saveSubjects(subjects: List<String>) {
         val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit().putStringSet(SUBJECTS_KEY, HashSet(subjects)).apply()
+    }
+}
+
+class SubjectAdapter(
+    context: Context,
+    private val subjects: MutableList<String>,
+    private val onDelete: (String) -> Unit
+) : ArrayAdapter<String>(context, 0, subjects) {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_subject, parent, false)
+        val textSubject = view.findViewById<TextView>(R.id.textSubjectName)
+        val buttonDelete = view.findViewById<Button>(R.id.buttonDeleteSubject)
+
+        textSubject.text = subjects[position]
+        buttonDelete.setOnClickListener {
+            onDelete(subjects[position])
+        }
+        return view
     }
 }

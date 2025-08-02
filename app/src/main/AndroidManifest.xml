@@ -41,6 +41,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SubjectActivity" />
+        <activity android:name=".StudentDetailActivity" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

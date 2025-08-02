@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.app.AlertDialog;
@@ -41,32 +40,39 @@ public class PersonAdapter extends ArrayAdapter<Person> {
         textName.setText(person.name + " (Attendance: " + person.attendance + ")");
         faceView.setImageBitmap(person.face);
 
-        // Rename only when clicking the name
-        textName.setOnClickListener(v -> {
-            EditText input = new EditText(getContext());
-            input.setText(person.name);
-            new AlertDialog.Builder(getContext())
-                .setTitle("Edit Name")
-                .setView(input)
-                .setPositiveButton("Save", (dialog, which) -> {
-                    String newName = input.getText().toString();
-                    person.name = newName;
-                    dbManager.updatePersonName(person, newName);
-                    notifyDataSetChanged();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-        });
-
         // Delete only when clicking the delete button
         buttonDelete.setOnClickListener(view -> {
             dbManager.deletePerson(DBManager.personList.get(position).name);
             notifyDataSetChanged();
         });
 
-        // REMOVE these lines to disable opening detail page
-        // faceView.setOnClickListener(detailClickListener);
-        // convertView.setOnClickListener(detailClickListener);
+        // Open details page when clicking the name
+        textName.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), StudentDetailActivity.class);
+            intent.putExtra("name", person.name);
+            intent.putExtra("roll", person.roll != null ? person.roll : "");
+            if (person.face != null) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                person.face.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] faceBytes = stream.toByteArray();
+                intent.putExtra("face", faceBytes);
+            }
+            getContext().startActivity(intent);
+        });
+
+        // Open details page when clicking the image
+        faceView.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), StudentDetailActivity.class);
+            intent.putExtra("name", person.name);
+            intent.putExtra("roll", person.roll != null ? person.roll : "");
+            if (person.face != null) {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                person.face.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] faceBytes = stream.toByteArray();
+                intent.putExtra("face", faceBytes);
+            }
+            getContext().startActivity(intent);
+        });
 
         textName.setClickable(true);
         buttonDelete.setClickable(true);

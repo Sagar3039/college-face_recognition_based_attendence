@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        window.statusBarColor = android.graphics.Color.TRANSPARENT
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+
         textWarning = findViewById<TextView>(R.id.textWarning)
         val textTotalStudents = findViewById<TextView>(R.id.textTotalStudents) // Add this line
 
@@ -216,14 +219,28 @@ class MainActivity : AppCompatActivity() {
                     val faceImage = Utils.cropFace(bitmap, faceBoxes[0])
                     val templates = FaceSDK.templateExtraction(bitmap, faceBoxes[0])
 
-                    val input = EditText(this)
-                    input.hint = "Enter name"
+                    val dialogLayout = LinearLayout(this).apply {
+                        orientation = LinearLayout.VERTICAL
+                        setPadding(50, 40, 50, 10)
+                    }
+                    val inputName = EditText(this).apply {
+                        hint = "Enter name"
+                    }
+                    val inputRoll = EditText(this).apply {
+                        hint = "Enter roll number"
+                        inputType = android.text.InputType.TYPE_CLASS_TEXT
+                    }
+                    dialogLayout.addView(inputName)
+                    dialogLayout.addView(inputRoll)
+
                     AlertDialog.Builder(this)
-                        .setTitle("Person Name")
-                        .setView(input)
+                        .setTitle("Student Details")
+                        .setView(dialogLayout)
                         .setPositiveButton("Save") { _, _ ->
-                            val name = input.text.toString().ifEmpty { "Person" + Random.nextInt(10000, 20000) }
-                            dbManager.insertPerson(name, faceImage, templates)
+                            val name = inputName.text.toString().ifEmpty { "Person" + Random.nextInt(10000, 20000) }
+                            val roll = inputRoll.text.toString().ifEmpty { "N/A" }
+                            dbManager.insertPerson(name, roll, faceImage, templates)
+                            // Optionally, save roll number in your DB and Person class if not already
                             personAdapter.notifyDataSetChanged()
                             findViewById<TextView>(R.id.textTotalStudents).text = "Total Students: ${DBManager.personList.size}"
                             Toast.makeText(this, getString(R.string.person_enrolled), Toast.LENGTH_SHORT).show()

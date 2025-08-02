@@ -1,4 +1,3 @@
-
 <resources>
     <color name="seed">#6750A4</color>
     <color name="md_theme_light_primary">#6750A4</color>
@@ -61,6 +60,11 @@
     <color name="md_theme_dark_surfaceTint">#D0BCFF</color>
     <color name="md_theme_dark_outlineVariant">#49454F</color>
     <color name="md_theme_dark_scrim">#000000</color>
-
+    <color name="black">#000000</color>
+    <color name="red">#601410</color>
     <color name="background1">#252525</color>
+    <color name="navy_blue">#1A237E</color>
+    <color name="navy_blue_dark">#0D133D</color>
+    <color name="navy_blue_light">#3949AB</color>
+    <color name="white">#FFFFFF</color>
 </resources>

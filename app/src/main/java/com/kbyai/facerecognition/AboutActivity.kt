@@ -17,14 +17,14 @@ class AboutActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.txtMail).setOnClickListener {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "plain/text"
-            intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("contact@kby-ai.com"))
+            intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("sagarkarmakar10.2004@gmail.com"))
             intent.putExtra(Intent.EXTRA_SUBJECT, "License Request")
             intent.putExtra(Intent.EXTRA_TEXT, "")
             startActivity(Intent.createChooser(intent, ""))
         }
 
         findViewById<TextView>(R.id.txtWhatsapp).setOnClickListener {
-            val general = Intent(Intent.ACTION_VIEW, Uri.parse("https://com.whatsapp/kbyai"))
+            val general = Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/qr/AN677CLW47B7D1"))
             val generalResolvers: HashSet<String> = HashSet()
             val generalResolveInfo: List<ResolveInfo> = packageManager.queryIntentActivities(general, 0)
             for (info in generalResolveInfo) {
@@ -85,8 +85,8 @@ class AboutActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<TextView>(R.id.txtSkype).setOnClickListener {
-            val general = Intent(Intent.ACTION_VIEW, Uri.parse("https://com.skype/kbyai"))
+        findViewById<TextView>(R.id.txtlinkedin).setOnClickListener {
+            val general = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.linkedin.com/in/sagar-karmakar-46791b285"))
             val generalResolvers: HashSet<String> = HashSet()
             val generalResolveInfo: List<ResolveInfo> = packageManager.queryIntentActivities(general, 0)
             for (info in generalResolveInfo) {
@@ -146,7 +146,5 @@ class AboutActivity : AppCompatActivity() {
                 startActivity(telegram)
             }
         }
-
-        findViewById<TextView>(R.id.textTotalStudents).setText("Total Students: 0")
     }
 }

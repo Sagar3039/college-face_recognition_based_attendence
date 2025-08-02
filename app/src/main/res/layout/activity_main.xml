@@ -132,6 +132,16 @@
             android:layout_weight="0.5"
             android:text="About"
             app:icon="@drawable/ic_about" />
+
+        <Button
+            android:id="@+id/buttonSubject"
+            style="@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Primary"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.5"
+            android:text="Subject"
+            app:icon="@drawable/ic_subject" />
     </LinearLayout>
 
     <LinearLayout

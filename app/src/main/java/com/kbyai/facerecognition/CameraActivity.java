@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -81,6 +82,8 @@ public class CameraActivity extends AppCompatActivity {
                 setUpCamera();
             });
         }
+
+        
     }
 
     @Override

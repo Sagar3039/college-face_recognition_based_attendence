@@ -1,5 +1,6 @@
 package com.kbyai.facerecognition
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Camera
@@ -147,7 +148,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.buttonIdentify).setOnClickListener {
-            startActivity(Intent(this, CameraActivityKt::class.java))
+            // Load subjects from SharedPreferences
+            val prefs = getSharedPreferences("subjects_prefs", Context.MODE_PRIVATE)
+            val subjects = prefs.getStringSet("subjects_list", setOf())?.toList()?.sorted() ?: listOf()
+            if (subjects.isEmpty()) {
+                Toast.makeText(this, "Please add a subject first!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Select Subject")
+            builder.setItems(subjects.toTypedArray()) { _, which ->
+                val selectedSubject = subjects[which]
+                val intent = Intent(this, CameraActivityKt::class.java)
+                intent.putExtra("selected_subject", selectedSubject)
+                startActivity(intent)
+            }
+            builder.show()
         }
 
         findViewById<Button>(R.id.buttonSettings).setOnClickListener {
@@ -181,12 +197,7 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
 
-                val bitmap: Bitmap? = try {
-                    Utils.getCorrectlyOrientedImage(this, imageUri)
-                } catch (e: Exception) {
-                    null
-                }
-
+                val bitmap = Utils.getCorrectlyOrientedImage(this, imageUri)
                 if (bitmap == null) {
                     Toast.makeText(this, "Failed to load image!", Toast.LENGTH_SHORT).show()
                     return

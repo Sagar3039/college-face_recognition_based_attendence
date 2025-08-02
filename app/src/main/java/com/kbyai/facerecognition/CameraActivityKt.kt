@@ -35,6 +35,7 @@ class CameraActivityKt : AppCompatActivity() {
     private lateinit var context: Context
 
     private var recognized = false
+    private var selectedSubject: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +44,9 @@ class CameraActivityKt : AppCompatActivity() {
         context = this
         cameraView = findViewById(R.id.preview)
         faceView = findViewById(R.id.faceView)
+
+        // Get subject from intent
+        selectedSubject = intent.getStringExtra("selected_subject")
 
         if (SettingsActivity.getCameraLens(context) == CameraSelector.LENS_FACING_BACK) {
             fotoapparat = Fotoapparat.with(this)
@@ -159,7 +163,15 @@ class CameraActivityKt : AppCompatActivity() {
                             intent.putExtra("roll", faceBox.roll)
                             intent.putExtra("pitch", faceBox.pitch)
                             intent.putExtra("attendance", identifiedPerson!!.attendance)
+                            intent.putExtra("subject", selectedSubject) // Add this line
                             startActivity(intent)
+
+                            if (selectedSubject != null && identifiedPerson != null) {
+                                val prefs = getSharedPreferences("attendance_prefs", Context.MODE_PRIVATE)
+                                val key = "attendance_${selectedSubject}_${identifiedPerson.name}"
+                                val current = prefs.getInt(key, 0)
+                                prefs.edit().putInt(key, current + 1).apply()
+                            }
                         }
                     }
                 }
